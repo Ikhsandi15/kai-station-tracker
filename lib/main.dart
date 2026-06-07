@@ -73,6 +73,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   bool isTracking = false;
   bool isAlarmRinging = false;
   StreamSubscription<Position>? positionStream;
+  Position? lastPosition;
 
   @override
   void initState() {
@@ -201,6 +202,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   }
 
   void _calculateDistance(Position currentPosition) {
+    lastPosition = currentPosition;
     if (selectedRoute.isEmpty || currentTargetIndex >= selectedRoute.length) return;
 
     Station currentTarget = selectedRoute[currentTargetIndex];
@@ -253,6 +255,14 @@ class _AlarmScreenState extends State<AlarmScreen> {
         // Lanjut stasiun berikutnya
         currentTargetIndex++;
         statusMessage = "Mencari lokasi menuju stasiun berikutnya...";
+        
+        // Panggil perhitungan ulang secara instan menggunakan lokasi terakhir
+        if (lastPosition != null) {
+          // Delay sedikit agar UI sempat render statusMessage dulu sebelum ditimpa
+          Future.delayed(const Duration(milliseconds: 100), () {
+            _calculateDistance(lastPosition!);
+          });
+        }
       } else {
         // Rute Selesai
         _stopTracking();
