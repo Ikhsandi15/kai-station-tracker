@@ -28,14 +28,26 @@ jobs:
       - name: Install dependencies
         run: flutter pub get
         
-      - name: Build APK (Fat APK for all devices)
-        run: flutter build apk --release
+      - name: Build Android APK (Split architecture)
+        run: flutter build apk --release --split-per-abi
         
-      - name: Rename APK
-        run: mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/KAI-Station-Tracker.apk
+      - name: Build Web Version
+        run: flutter build web --release
           
-      - name: Upload APK KAI Station Tracker
+      - name: Upload Android APK (64-bit / HP Baru)
         uses: actions/upload-artifact@v4
         with:
-          name: KAI-Station-Tracker-APK
-          path: build/app/outputs/flutter-apk/KAI-Station-Tracker.apk
+          name: KAI-Tracker-Android-64bit
+          path: build/app/outputs/flutter-apk/app-arm64-v8a-release.apk
+
+      - name: Upload Android APK (32-bit / HP Lama)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KAI-Tracker-Android-32bit
+          path: build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk
+
+      - name: Upload Web Version (Bisa untuk iOS/iPhone)
+        uses: actions/upload-artifact@v4
+        with:
+          name: KAI-Tracker-Web
+          path: build/web/
