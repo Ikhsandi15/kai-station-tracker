@@ -224,7 +224,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
 
   void _triggerAlarm() {
     if (!kIsWeb) {
-      FlutterRingtonePlayer.playAlarm(
+      FlutterRingtonePlayer().playAlarm(
         looping: true, 
         volume: 1.0, 
         asAlarm: true, 
@@ -235,7 +235,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   void _stopAlarmRingingOnly() {
     isAlarmRinging = false;
     if (!kIsWeb) {
-      FlutterRingtonePlayer.stop();
+      FlutterRingtonePlayer().stop();
     }
   }
 
@@ -259,7 +259,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   void dispose() {
     positionStream?.cancel();
     if (!kIsWeb) {
-      FlutterRingtonePlayer.stop();
+      FlutterRingtonePlayer().stop();
     }
     _radiusController.dispose();
     _searchController.dispose();
