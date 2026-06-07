@@ -74,6 +74,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
   bool isAlarmRinging = false;
   StreamSubscription<Position>? positionStream;
   Position? lastPosition;
+  Timer? locationTimer;
 
   @override
   void initState() {
@@ -163,8 +164,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       locationSettings = AndroidSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 0, 
-        intervalDuration: const Duration(seconds: 2), // Paksa update setiap 2 detik
+        distanceFilter: 10, // Diperkecil agar lebih cepat mendeteksi pergerakan
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           notificationText: "Sedang memantau jadwal stasiun berurutan...",
           notificationTitle: "Alarm Kereta Aktif",
@@ -190,9 +190,25 @@ class _AlarmScreenState extends State<AlarmScreen> {
         .listen((Position position) {
       _calculateDistance(position);
     });
+
+    // Fallback: Paksa ambil lokasi setiap 2 detik secara manual
+    // Ini sangat berguna untuk mengatasi bug Fake GPS / Joystick yang kadang di-ignore oleh stream
+    locationTimer = Timer.periodic(const Duration(seconds: 2), (timer) async {
+      if (!isTracking) {
+        timer.cancel();
+        return;
+      }
+      try {
+        Position pos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+        _calculateDistance(pos);
+      } catch (e) {
+        // Abaikan
+      }
+    });
   }
 
   void _stopTracking() {
+    locationTimer?.cancel();
     positionStream?.cancel();
     if (isAlarmRinging) _stopAlarmRingingOnly();
     setState(() {
@@ -274,6 +290,7 @@ class _AlarmScreenState extends State<AlarmScreen> {
 
   @override
   void dispose() {
+    locationTimer?.cancel();
     positionStream?.cancel();
     if (!kIsWeb) {
       FlutterRingtonePlayer().stop();
