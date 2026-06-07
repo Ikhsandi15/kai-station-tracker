@@ -163,7 +163,8 @@ class _AlarmScreenState extends State<AlarmScreen> {
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       locationSettings = AndroidSettings(
         accuracy: LocationAccuracy.high,
-        distanceFilter: 10, // Diperkecil agar lebih cepat mendeteksi pergerakan
+        distanceFilter: 0, 
+        intervalDuration: const Duration(seconds: 2), // Paksa update setiap 2 detik
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           notificationText: "Sedang memantau jadwal stasiun berurutan...",
           notificationTitle: "Alarm Kereta Aktif",
