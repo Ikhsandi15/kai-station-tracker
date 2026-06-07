@@ -1,0 +1,24 @@
+name: kai_stasiun_tracking
+description: "A new Flutter project."
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.2.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.8
+  geolocator: ^13.0.0
+  flutter_ringtone_player: ^3.2.0
+  geolocator_android: ^4.6.2
+  flutter_local_notifications: ^22.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
