@@ -150,13 +150,19 @@ class _AlarmScreenState extends State<AlarmScreen> {
       statusMessage = "Mencari lokasi...";
     });
 
+    try {
+      Position initialPos = await Geolocator.getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+      _calculateDistance(initialPos);
+    } catch (e) {
+      // Abaikan, biarkan stream yang ambil alih
+    }
+
     LocationSettings locationSettings;
     
     if (!kIsWeb && defaultTargetPlatform == TargetPlatform.android) {
       locationSettings = AndroidSettings(
-        accuracy: LocationAccuracy.best,
-        distanceFilter: 50,
-        forceLocationManager: true,
+        accuracy: LocationAccuracy.high,
+        distanceFilter: 10, // Diperkecil agar lebih cepat mendeteksi pergerakan
         foregroundNotificationConfig: const ForegroundNotificationConfig(
           notificationText: "Sedang memantau jadwal stasiun berurutan...",
           notificationTitle: "Alarm Kereta Aktif",
